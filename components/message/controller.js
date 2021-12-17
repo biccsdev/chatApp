@@ -1,17 +1,34 @@
 const store = require('./store');
+const socket = require('../../socket').socket;
 
-function addMessage(user, message) {
+function addMessage(chat, user, message, file) {
     return new Promise((resolve, reject) => {
-        if (!user || !message) {
+        if (!chat || !user || !message) {
             console.error('[message controller] no user or message');
             return reject('Incorrect data');
         }
+
+        let fileUrl = '';
+        //test
+
+        //end-test
+        if (file) {
+            fileUrl = 'http://localhost:3000/app/files' + file.filename;
+        }
+
         const fullMessage = {
+            chat: chat,
             user: user,
             message: message,
-            date: new Date()
+            date: new Date(),
+            file: fileUrl
         };
         store.add(fullMessage);
+        //socket managing
+        socket.io.emit('message', fullMessage);
+        console.log(fullMessage);
+
+
         resolve(fullMessage);
     });
 }
@@ -33,8 +50,25 @@ function updateMessages(id, message) {
     })
 }
 
+function deleteMessage(id) {
+    return new Promise((resolve, reject) => {
+        if (!id) {
+            reject('Invalid ID');
+            return false;
+        }
+        store.remove(id)
+            .then(() => {
+                resolve();
+            })
+            .catch(e => {
+                reject(e);
+            })
+    });
+}
+
 module.exports = {
     addMessage,
     getMessages,
-    updateMessages
+    updateMessages,
+    deleteMessage,
 };
