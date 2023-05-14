@@ -7,7 +7,7 @@ const upload = multer({
     dest: 'public/files/',
 });
 
-router.get('/', function(req, res) {
+router.get('/', function (req, res) {
     const filterMessages = req.query.user || null;
     controller.getMessages(filterMessages)
         .then((messageList) => {
@@ -18,11 +18,11 @@ router.get('/', function(req, res) {
         })
 });
 //upload.array('files', 5)
-router.post('/', upload.single('file'), function(req, res) {
+router.post('/', upload.single('file'), function (req, res) {
 
-    console.log(`Old Name: ${req.file.originalname}`);
-    console.log(`New Name: ${req.file.filename}`);
-    console.log(req.file);
+    // console.log(`Old Name: ${req.file.originalname}`);
+    // console.log(`New Name: ${req.file.filename}`);
+    // console.log(req.file);
 
     controller.addMessage(req.body.chat, req.body.user, req.body.message, req.file)
         .then((fullMessage) => {
@@ -33,7 +33,7 @@ router.post('/', upload.single('file'), function(req, res) {
         });
 });
 
-router.patch('/:id', function(req, res) {
+router.patch('/:id', function (req, res) {
     controller.updateMessages(req.params.id, req.body.message)
         .then((data) => {
             response.success(req, res, data, 200);
@@ -43,7 +43,7 @@ router.patch('/:id', function(req, res) {
         });
 });
 
-router.delete('/:id', function(req, res) {
+router.delete('/:id', function (req, res) {
     controller.deleteMessage(req.params.id)
         .then(() => {
             response.success(req, res, `User ${req.params.id} eliminado`, 200);
